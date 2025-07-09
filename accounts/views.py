@@ -1,5 +1,5 @@
 from django.shortcuts import render
-from .serializers import RegisterSerializer, OTPVerifySerializer, EmailOnlySerializer
+from .serializers import RegisterSerializer, OTPVerifySerializer, EmailOnlySerializer, MyTokenObtainPairSerializer
 from django.conf import settings
 from rest_framework import generics, status
 from django.contrib.auth import get_user_model
@@ -12,6 +12,7 @@ from .models import Profile
 import random
 from django.utils import timezone
 from django.core.mail import send_mail
+from rest_framework_simplejwt.views import TokenObtainPairView
 
 User = get_user_model()
 
@@ -19,6 +20,9 @@ class RegisterView(generics.CreateAPIView):
     queryset = User.objects.all 
     serializer_class = RegisterSerializer
     permission_classes = [AllowAny]
+
+class MyTokenObtainPairView(TokenObtainPairView):
+    serializer_class = MyTokenObtainPairSerializer
 
 class ActiveAccountView(generics.GenericAPIView):
     def get(self,request,uidb64, token, *args, **kwargs):

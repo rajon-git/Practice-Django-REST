@@ -1,7 +1,9 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
+from rest_framework_simplejwt.serializers import TokenObtainPairSerializer
 
 User = get_user_model()
+
 
 class RegisterSerializer(serializers.ModelSerializer):
     password = serializers.CharField(write_only = True)
@@ -18,3 +20,13 @@ class OTPVerifySerializer(serializers.Serializer):
 
 class EmailOnlySerializer(serializers.Serializer):
     email = serializers.EmailField()
+
+class MyTokenObtainPairSerializer(TokenObtainPairSerializer):
+    def validate(self, attrs):
+        data = super().validate(attrs)
+        data['user'] = {
+            'id': self.user.id,
+            'email': self.user.email,
+            'username': self.user.username
+        }
+        return data
